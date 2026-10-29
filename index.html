@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>hi, you!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Are+You+Serious&display=swap" rel="stylesheet">
 <style>
 :root {
   --mint: #cffffc;
@@ -19,8 +22,8 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: "Trebuchet MS", sans-serif;
-  color: var(--blue);
+  font-family: "Are You Serious", cursive;
+color: #ffffff;
   background: linear-gradient(135deg, var(--mint), var(--sky), var(--cyan));
   background-size: cover;
 }
@@ -45,28 +48,27 @@ h1 {
 form {
   width: min(100%, 390px);
   margin: auto;
-}
 .name-line {
   width: 100%;
   border: 0;
-  border-bottom: 1.5px solid var(--blue);
+  border-bottom: 1.5px solid #542c1d;
   border-radius: 0;
   outline: none;
   background: transparent;
   padding: 12px 4px;
-  color: var(--blue);
+  color: #ffffff;
   font: inherit;
   font-size: 17px;
   text-align: center;
-  animation: wiggle 2.6s ease-in-out infinite;
+  animation: wiggle 0.15s linear infinite;
 }
 .name-line::placeholder { color: #3a559c; opacity: .75; }
 .name-line:focus { animation-play-state: paused; border-bottom-width: 2px; }
 @keyframes wiggle {
-  0%, 100% { transform: translateX(0) rotate(0); }
-  20% { transform: translateX(-1.5px) rotate(-.25deg); }
-  45% { transform: translateX(1.5px) rotate(.25deg); }
-  70% { transform: translateX(-1px) rotate(-.15deg); }
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(0.3px, -0.3px); }
+  50% { transform: translate(-0.3px, 0.2px); }
+  75% { transform: translate(0.2px, 0.3px); }
 }
 button {
   margin-top: 28px;
