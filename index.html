@@ -9,10 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Are+You+Serious&display=swap" rel="stylesheet">
 <style>
 :root {
-  --mint: #cffffc;
-  --sky: #cff9ff;
-  --blue: #00288c;
-  --cyan: #55d0e0;
+  --forest: #192e17;
+  --chocolate: #2e2217;
+  --chestnut: #542c1d;
+  --cream: #ffe6d6;
+  --white: #ffffff;
+  --cherry: #5e0000;
+  --honey: #ffda82;
+  --gold: #ffcc54;
+  --sage: #93bd8f;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 100%; min-height: 100%; }
@@ -23,8 +28,8 @@ body {
   align-items: center;
   overflow: hidden;
   font-family: "Are You Serious", cursive;
-color: #ffffff;
-  background: linear-gradient(135deg, var(--mint), var(--sky), var(--cyan));
+  color: var(--white);
+  background: var(--forest);
   background-size: cover;
 }
 body::before {
@@ -40,7 +45,7 @@ main {
   padding: 24px 0;
 }
 h1 {
-  font-size: clamp(23px, 5vw, 38px);
+  font-size: clamp(36px, 10vw, 72px);
   font-weight: 500;
   letter-spacing: .03em;
   margin: 0 0 40px;
@@ -48,7 +53,34 @@ h1 {
 form {
   width: min(100%, 390px);
   margin: auto;
+}
+
 .name-line {
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid var(--chestnut);
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 12px 4px;
+  color: var(--white);
+  text-shadow: 0 0 4px var(--chestnut), 1px 1px 2px var(--chocolate);
+  font: inherit;
+  font-size: 51px;
+  text-align: center;
+  animation: wiggle 0.15s linear infinite;
+}
+
+.name-line::placeholder {
+  color: var(--cream);
+  opacity: 0.85;
+  text-shadow: 1px 1px 2px var(--chocolate);
+}
+
+.name-line:focus {
+  animation-play-state: paused;
+  border-bottom-width: 2px;
+}
   width: 100%;
   border: 0;
   border-bottom: 1.5px solid #542c1d;
@@ -74,17 +106,30 @@ button {
   margin-top: 28px;
   border: 0;
   background: transparent;
-  color: var(--blue);
-  font: inherit;
-  font-size: 16px;
-  letter-spacing: .14em;
+  color: #192e17;
+  text-shadow: 0 0 2px #ffe6d6;
+  font-family: "Are You Serious", cursive;
+  font-size: 48px;
+  letter-spacing: .08em;
   padding: 10px 16px;
   cursor: pointer;
   transition: transform .2s, letter-spacing .2s;
 }
+
+button:hover {
+  transform: translateY(-2px);
+  letter-spacing: .12em;
+}
+
+button:focus-visible {
+  outline: 1px solid #ffda82;
+}
+}
 button:hover { transform: translateY(-2px); letter-spacing: .22em; }
-button:focus-visible { outline: 1px solid var(--blue); }
+button:focus-visible { outline: 1px solid var(--honey); }
 #error {
+  color: var(--cream);
+text-shadow: 1px 1px 2px var(--chocolate);
   min-height: 20px;
   margin: 12px 0 0;
   font-size: 13px;
