@@ -600,10 +600,13 @@ text-shadow: 1px 1px 2px var(--chocolate);
   text-align: left;
   pointer-events: none;
 }
+  .dear-text[hidden] {
+  display: none !important;
+}
 
 .dear-label {
   font-family: "Are You Serious", cursive;
-  font-size: clamp(20px, 3vw, 30px);
+  font-size: clamp(28px, 5vw, 58px);
   margin-bottom: 4px;
 }
 
@@ -611,7 +614,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
   display: block;
   max-width: 100%;
   font-family: "Are You Serious", cursive;
-  font-size: clamp(38px, 7vw, 82px);
+  font-size: clamp(25px, 7vw, 70px);
   line-height: 1.05;
   text-align: left;
   white-space: normal;
@@ -849,11 +852,13 @@ text-shadow: 1px 1px 2px var(--chocolate);
       alt="Dear page"
     >
 
-   <div class="dear-text">
-  <div class="dear-label">Dear</div>
-  <div class="dear-name" id="dearName"></div>
+       <div class="dear-text">
+      <div class="dear-label">Dear</div>
+      <div class="dear-name" id="dearName"></div>
+    </div>
   </div>
 
+  <div class="letter-actions">
   <div class="letter-actions">
     <button type="button" class="letter-button" id="saveDear">
       Save your Dear
@@ -1225,6 +1230,7 @@ const letterPageImage =
 
 const dearName =
   document.getElementById("dearName");
+const dearText = document.querySelector(".dear-text");
 
 const letterProgress =
   document.getElementById("letterProgress");
@@ -1265,7 +1271,7 @@ function showLetterPage(index) {
 
   const isDear = index === 0;
 
-  dearName.hidden = !isDear;
+  dearText.hidden = !isDear;
   saveDear.hidden = !isDear;
 
   letterNext.textContent =
