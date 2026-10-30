@@ -30,19 +30,16 @@ body {
   font-family: "Are You Serious", cursive;
   color: var(--white);
   background: var(--forest);
-  background-size: cover;
 }
-body::before {
-  content: "";
+
+#background-video {
   position: fixed;
   inset: 0;
-  background: url("assets/opening-bg.gif") center/cover no-repeat;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   z-index: -1;
-}
-main {
-  width: 96vw;
-  text-align: center;
-  padding: 24px 0;
+  pointer-events: none;
 }
 h1 {
   font-size: clamp(14px, 4.5vw, 48px);
@@ -352,6 +349,11 @@ text-shadow: 1px 1px 2px var(--chocolate);
 </style>
 </head>
 <body>
+
+<video id="background-video" autoplay muted loop playsinline>
+  <source src="assets/opening-bg.mp4" type="video/mp4">
+</video>
+
 <main>
   <h1>⋆. 𐙚 ˚nhập tên đầy đủ nha★.</h1>
   <form id="nameForm">
