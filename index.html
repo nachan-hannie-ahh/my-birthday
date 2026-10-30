@@ -372,6 +372,61 @@ text-shadow: 1px 1px 2px var(--chocolate);
   .album-vinyl {
     left: 35%;
   }
+/* ===== DIALOGUE SCENE ===== */
+
+#scene-dialogue {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
+
+#scene-dialogue[hidden] {
+  display: none !important;
+}
+
+.dialogue-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.dialogue-speaker {
+  font-size: clamp(20px, 3vw, 30px);
+  margin: 0;
+  text-shadow: 2px 2px 5px #192e17;
+}
+
+.dialogue-text {
+  font-size: clamp(30px, 5vw, 52px);
+  margin: 0;
+  min-height: 1.4em;
+  text-shadow:
+    2px 2px 2px #192e17,
+    3px 3px 5px #2e2217,
+    0 0 10px #542c1d;
+}
+
+.dialogue-hint {
+  font-size: 17px;
+  opacity: .75;
+  margin-top: 20px;
+  animation: hint-blink 1.2s infinite;
+}
+
+@keyframes hint-blink {
+  50% { opacity: .25; }
+ }
 }
 </style>
 </head>
@@ -466,6 +521,19 @@ text-shadow: 1px 1px 2px var(--chocolate);
   <audio id="birthdayMusic"></audio>
 
 </section>
+  
+<!-- DIALOGUE SCENE -->
+
+<section id="scene-dialogue" hidden>
+  <div class="dialogue-content">
+    <p class="dialogue-speaker">character</p>
+    <p class="dialogue-text" id="dialogueText"></p>
+    <p class="dialogue-hint" id="dialogueHint">
+      click anywhere to continue...
+    </p>
+  </div>
+</section>
+
 <script>
 
 /* ===== OPENING TO MUSIC ===== */
@@ -493,6 +561,82 @@ nameForm.addEventListener("submit", function(event) {
   openingScreen.hidden = true;
   musicScreen.hidden = false;
 });
+
+/* ===== DIALOGUE SYSTEM ===== */
+
+const dialogueScreen = document.getElementById("scene-dialogue");
+const dialogueText = document.getElementById("dialogueText");
+const dialogueHint = document.getElementById("dialogueHint");
+
+const dialogues = [
+  "chao xìn",
+  "me vui khi thấy you ở đây:D",
+  "me có thứ này muốn thông báo cho you"
+];
+
+let dialogueIndex = 0;
+let typingTimer = null;
+let isTyping = false;
+let dialogueFinished = false;
+
+function showDialogue(index) {
+  clearInterval(typingTimer);
+
+  dialogueIndex = index;
+  dialogueText.textContent = "";
+  dialogueHint.textContent = "";
+  isTyping = true;
+  dialogueFinished = false;
+
+  const message = dialogues[index];
+  let charIndex = 0;
+
+  typingTimer = setInterval(() => {
+    dialogueText.textContent += message[charIndex];
+    charIndex++;
+
+    if (charIndex >= message.length) {
+      clearInterval(typingTimer);
+      isTyping = false;
+      dialogueFinished = true;
+
+      if (index < 2) {
+        dialogueHint.textContent =
+          "click anywhere to continue...";
+      } else {
+        // Chờ hai nút trả lời của bạn.
+        dialogueHint.textContent = "";
+      }
+    }
+  }, 65);
+}
+
+dialogueScreen.addEventListener("click", () => {
+  if (isTyping) {
+    clearInterval(typingTimer);
+    dialogueText.textContent = dialogues[dialogueIndex];
+    isTyping = false;
+    dialogueFinished = true;
+
+    if (dialogueIndex < 2) {
+      dialogueHint.textContent =
+        "click anywhere to continue...";
+    }
+    return;
+  }
+
+  if (!dialogueFinished) return;
+
+  if (dialogueIndex < 2) {
+    showDialogue(dialogueIndex + 1);
+  }
+});
+
+// Hàm dành cho hai nút trả lời tự thiết kế
+function continueToNextScene() {
+  dialogueScreen.hidden = true;
+  // Sau này nối với scene tiếp theo tại đây.
+}
 
 
 /* ===== MUSIC PLAYER ===== */
@@ -648,19 +792,16 @@ document.getElementById("pauseMusic").addEventListener("click", function() {
 });
 
 
-/* NEXT TO LETTER */
+
+/* NEXT TO DIALOGUE */
 
 document.getElementById("musicNext").addEventListener("click", function() {
   audio.pause();
 
-  const letterScreen = document.getElementById("scene-letter");
+  musicScreen.hidden = true;
+  dialogueScreen.hidden = false;
 
-  if (letterScreen) {
-    musicScreen.hidden = true;
-    letterScreen.hidden = false;
-  } else {
-    alert("Music Scene đã xong! Tiếp theo mình sẽ thêm Letter Scene :>");
-  }
+  showDialogue(0);
 });
 </script>
 </body>
