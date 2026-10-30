@@ -591,18 +591,32 @@ text-shadow: 1px 1px 2px var(--chocolate);
   filter: drop-shadow(0 10px 22px #192e1740);
 }
 
-.dear-name {
+.dear-text {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 85%;
+  left: 12%;
+  top: 25%;
+  width: 76%;
   color: #542c1d;
-  font-family: "Are You Serious", cursive;
-  font-size: clamp(48px, 8vw, 100px);
-  text-align: center;
-  white-space: nowrap;
+  text-align: left;
   pointer-events: none;
+}
+
+.dear-label {
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(20px, 3vw, 30px);
+  margin-bottom: 4px;
+}
+
+.dear-name {
+  display: block;
+  max-width: 100%;
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(38px, 7vw, 82px);
+  line-height: 1.05;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .letter-progress {
@@ -835,7 +849,9 @@ text-shadow: 1px 1px 2px var(--chocolate);
       alt="Dear page"
     >
 
-    <span class="dear-name" id="dearName"></span>
+   <div class="dear-text">
+  <div class="dear-label">Dear</div>
+  <div class="dear-name" id="dearName"></div>
   </div>
 
   <div class="letter-actions">
@@ -1286,37 +1302,105 @@ saveDear.addEventListener("click", async () => {
     await document.fonts.ready;
 
     const canvas = document.createElement("canvas");
-
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
 
     const ctx = canvas.getContext("2d");
-
     ctx.drawImage(image, 0, 0);
 
-    const fontSize = Math.round(canvas.width * 0.08);
+    const w = canvas.width;
+    const h = canvas.height;
 
-    ctx.font = `${fontSize}px "Are You Serious"`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    const x = w * 0.12;
+    const y = h * 0.25;
+    const maxWidth = w * 0.76;
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
     ctx.fillStyle = "#542c1d";
 
-    ctx.fillText(
-      guestNameForLetter,
-      canvas.width / 2,
-      canvas.height / 2,
-      canvas.width * 0.8
+    // Chữ Dear nhỏ
+    const labelSize = w * 0.04;
+    ctx.font = `${labelSize}px "Are You Serious"`;
+    ctx.fillText("Dear", x, y);
+
+    // Tên khách lớn hơn
+    let fontSize = w * 0.10;
+    const minFontSize = w * 0.045;
+    const lineHeight = 1.05;
+
+    let lines = [];
+
+    function makeLines(size) {
+      ctx.font = `${size}px "Are You Serious"`;
+
+      const words = guestNameForLetter.split(" ");
+      const result = [];
+      let line = "";
+
+      for (const word of words) {
+        const test = line ? line + " " + word : word;
+
+        if (ctx.measureText(test).width <= maxWidth) {
+          line = test;
+        } else {
+          if (line) result.push(line);
+
+          if (ctx.measureText(word).width <= maxWidth) {
+            line = word;
+          } else {
+            let part = "";
+
+            for (const char of word) {
+              if (
+                ctx.measureText(part + char).width > maxWidth &&
+                part
+              ) {
+                result.push(part);
+                part = char;
+              } else {
+                part += char;
+              }
+            }
+
+            line = part;
+          }
+        }
+      }
+
+      if (line) result.push(line);
+      return result;
+    }
+
+    do {
+      lines = makeLines(fontSize);
+      fontSize -= w * 0.005;
+    } while (
+      fontSize > minFontSize &&
+      lines.some(line => ctx.measureText(line).width > maxWidth)
     );
+
+    ctx.font = `${Math.max(fontSize, minFontSize)}px "Are You Serious"`;
+
+    const nameY = y + labelSize * 1.25;
+    const actualLineHeight = Math.max(fontSize, minFontSize) * lineHeight;
+
+    lines.forEach((line, index) => {
+      ctx.fillText(
+        line,
+        x,
+        nameY + index * actualLineHeight,
+        maxWidth
+      );
+    });
 
     const safeName = guestNameForLetter
       .replace(/[\\/:*?"<>|]/g, "")
       .replace(/\s+/g, "_");
 
     const link = document.createElement("a");
-
     link.download = `Dear_${safeName}.jpg`;
     link.href = canvas.toDataURL("image/jpeg", 0.95);
-
     link.click();
 
   } catch (error) {
@@ -1325,13 +1409,14 @@ saveDear.addEventListener("click", async () => {
   }
 });
 
-
 /* ===== ENLARGE LETTER IMAGE ===== */
 
 const imageViewer = document.getElementById("imageViewer");
 const viewerImage = document.getElementById("viewerImage");
 
 letterPageImage.addEventListener("click", () => {
+  if (currentPageIndex === 0) return;
+
   viewerImage.src = letterPageImage.src;
   viewerImage.alt = letterPageImage.alt;
   imageViewer.hidden = false;
