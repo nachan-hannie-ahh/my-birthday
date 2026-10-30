@@ -544,8 +544,8 @@ text-shadow: 1px 1px 2px var(--chocolate);
 @keyframes envelope-float {
   0%, 100% { translate: 0 0; }
   50% { translate: 0 -7px; }
+ }
 }
-
 .confetti-piece {
   position: absolute;
   top: -20px;
@@ -570,6 +570,10 @@ text-shadow: 1px 1px 2px var(--chocolate);
   gap: 12px;
 }
 
+  #scene-envelope[hidden],
+#scene-letter[hidden] {
+  display: none !important;
+}
 .letter-page-wrap {
   position: relative;
   width: min(88vw, 76vh, 900px);
@@ -592,10 +596,10 @@ text-shadow: 1px 1px 2px var(--chocolate);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  max-width: 80%;
-  color: #2e2217;
+  max-width: 85%;
+  color: #542c1d;
   font-family: "Are You Serious", cursive;
-  font-size: clamp(30px, 5vw, 58px);
+  font-size: clamp(48px, 8vw, 100px);
   text-align: center;
   white-space: nowrap;
   pointer-events: none;
@@ -1287,12 +1291,12 @@ saveDear.addEventListener("click", async () => {
 
     ctx.drawImage(image, 0, 0);
 
-    const fontSize = Math.round(canvas.width * 0.055);
+    const fontSize = Math.round(canvas.width * 0.08);
 
     ctx.font = `${fontSize}px "Are You Serious"`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#2e2217";
+    ctx.fillStyle = "#542c1d";
 
     ctx.fillText(
       guestNameForLetter,
