@@ -132,6 +132,223 @@ text-shadow: 1px 1px 2px var(--chocolate);
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+  
+/* ===== MUSIC SCENE ===== */
+
+#scene-music {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 35px 5vw 45px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #cffffc, #cff9ff, #a8f3ff);
+  color: #00288c;
+  z-index: 5;
+}
+
+#scene-music[hidden] {
+  display: none !important;
+}
+
+.music-heading {
+  text-align: center;
+  font-size: clamp(24px, 4vw, 38px);
+  margin: 0;
+  font-weight: normal;
+}
+
+.music-subtitle {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.music-player-area {
+  position: relative;
+  width: min(330px, 65vw);
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-player-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.music-drop-zone {
+  position: absolute;
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-drop-zone.drag-over {
+  outline: 3px dashed #55d0e0;
+  outline-offset: 5px;
+}
+
+.player-vinyl {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #a8f3ff 0 8%, #00288c 9% 13%,
+    #111 14% 17%, #222 18% 55%, #080808 56% 100%);
+  box-shadow: 0 3px 12px #00288c55;
+  display: none;
+}
+
+.player-vinyl.visible {
+  display: block;
+  animation: vinyl-spin 3s linear infinite;
+}
+
+.player-vinyl.paused {
+  animation-play-state: paused;
+}
+
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.music-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.music-controls button,
+.music-next {
+  border: 1px solid #00288c;
+  border-radius: 30px;
+  background: #cff9ff;
+  color: #00288c;
+  padding: 10px 22px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.music-controls button:hover,
+.music-next:hover {
+  background: #a8f3ff;
+}
+
+.music-track-name {
+  text-align: center;
+  min-height: 22px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.album-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(8px, 2vw, 25px);
+  padding: 15px 0;
+}
+
+.album-card {
+  position: relative;
+  width: clamp(75px, 14vw, 145px);
+  aspect-ratio: 1;
+  flex-shrink: 1;
+}
+
+.album-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  box-shadow: 0 5px 12px #00288c33;
+  pointer-events: none;
+}
+
+.album-vinyl {
+  position: absolute;
+  width: 88%;
+  height: 88%;
+  top: 6%;
+  left: 35%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #a8f3ff 0 7%, #00288c 8% 12%,
+    #111 13% 16%, #252525 17% 55%, #080808 56% 100%);
+  box-shadow: 0 3px 10px #0005;
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.album-vinyl:active {
+  cursor: grabbing;
+}
+
+.album-card.selected .album-cover {
+  outline: 3px solid #55d0e0;
+  outline-offset: 3px;
+}
+
+.drag-ghost {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  background:
+    radial-gradient(circle, #a8f3ff 0 7%, #00288c 8% 12%,
+    #111 13% 16%, #252525 17% 55%, #080808 56% 100%);
+  opacity: .9;
+  transform: translate(-50%, -50%);
+}
+
+.music-next {
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  #scene-music {
+    padding: 25px 12px 30px;
+  }
+
+  .music-player-area {
+    height: 190px;
+  }
+
+  .album-row {
+    gap: 5px;
+  }
+
+  .album-card {
+    width: 17vw;
+  }
+
+  .album-vinyl {
+    left: 25%;
+  }
+}
 </style>
 </head>
 <body>
@@ -151,9 +368,86 @@ text-shadow: 1px 1px 2px var(--chocolate);
     <p id="error" role="status"></p>
   </form>
 </main>
+  
+<!-- MUSIC SCENE -->
+<section id="scene-music" hidden>
+
+  <div>
+    <h1 class="music-heading">˚ ༘♡ music for you</h1>
+    <p class="music-subtitle">
+      choose a record and put it on the player :>
+    </p>
+  </div>
+
+  <div>
+    <div class="music-player-area" id="musicDropZone">
+      <img
+        class="music-player-image"
+        src="assets/may-phat.png"
+        alt="Music player"
+      >
+      <div class="player-drop-zone" id="playerSlot">
+        <div class="player-vinyl" id="playerVinyl"></div>
+      </div>
+    </div>
+
+    <p class="music-track-name" id="trackName">
+      no record selected yet
+    </p>
+
+    <div class="music-controls">
+      <button type="button" id="playMusic">▶ PLAY</button>
+      <button type="button" id="pauseMusic">Ⅱ PAUSE</button>
+    </div>
+  </div>
+
+  <div class="album-row">
+
+    <div class="album-card">
+      <div class="album-vinyl" data-track="0"></div>
+      <img class="album-cover" src="assets/bìa blackpink.png" alt="BLACKPINK">
+    </div>
+
+    <div class="album-card">
+      <div class="album-vinyl" data-track="1"></div>
+      <img class="album-cover" src="assets/bìa JVKE.png" alt="JVKE">
+    </div>
+
+    <div class="album-card">
+      <div class="album-vinyl" data-track="2"></div>
+      <img class="album-cover" src="assets/bìa love.png" alt="Love">
+    </div>
+
+    <div class="album-card">
+      <div class="album-vinyl" data-track="3"></div>
+      <img class="album-cover" src="assets/bìa mitsuri.png" alt="Mitsuri">
+    </div>
+
+    <div class="album-card">
+  <div class="album-vinyl" data-track="4"></div>
+  <img class="album-cover" src="assets/bìa Ngọt.png" alt="Ngọt">
+    </div>
+
+  </div>
+
+  <button type="button" class="music-next" id="musicNext">
+    NEXT →
+  </button>
+
+  <audio id="birthdayMusic"></audio>
+
+</section>
 <script>
-document.getElementById("nameForm").addEventListener("submit", function(event) {
+
+/* ===== OPENING TO MUSIC ===== */
+
+const nameForm = document.getElementById("nameForm");
+const openingScreen = document.querySelector("main");
+const musicScreen = document.getElementById("scene-music");
+
+nameForm.addEventListener("submit", function(event) {
   event.preventDefault();
+
   const input = document.getElementById("guestName");
   const name = input.value.trim().replace(/\s+/g, " ");
   const error = document.getElementById("error");
@@ -166,7 +460,157 @@ document.getElementById("nameForm").addEventListener("submit", function(event) {
 
   sessionStorage.setItem("guestFullName", name);
   error.textContent = "";
-  alert("welcome, " + name + " :>!");
+
+  openingScreen.hidden = true;
+  musicScreen.hidden = false;
+});
+
+
+/* ===== MUSIC PLAYER ===== */
+
+const tracks = [
+  { name: "BLACKPINK", src: "assets/blackpink.mp3" },
+  { name: "JVKE", src: "assets/JVKE.mp3" },
+  { name: "Love", src: "assets/love.mp3" },
+  { name: "Mitsuri", src: "assets/mitsuri.mp3" },
+  { name: "Ngọt", src: "assets/Ngọt.mp3" }
+];
+
+const audio = document.getElementById("birthdayMusic");
+const dropZone = document.getElementById("musicDropZone");
+const playerSlot = document.getElementById("playerSlot");
+const playerVinyl = document.getElementById("playerVinyl");
+const trackName = document.getElementById("trackName");
+
+let selectedTrack = null;
+
+function chooseTrack(index) {
+  selectedTrack = index;
+
+  audio.pause();
+  audio.src = tracks[index].src;
+  audio.load();
+
+  trackName.textContent = tracks[index].name;
+  playerVinyl.classList.add("visible");
+  playerVinyl.classList.remove("paused");
+
+  document.querySelectorAll(".album-card").forEach((card, i) => {
+    card.classList.toggle("selected", i === index);
+  });
+}
+
+
+/* DRAG VINYL */
+
+let dragging = false;
+let ghost = null;
+let draggedTrack = null;
+
+document.querySelectorAll(".album-vinyl").forEach(vinyl => {
+
+  vinyl.addEventListener("pointerdown", function(e) {
+    e.preventDefault();
+
+    dragging = true;
+    draggedTrack = Number(this.dataset.track);
+
+    ghost = document.createElement("div");
+    ghost.className = "drag-ghost";
+    document.body.appendChild(ghost);
+
+    moveGhost(e.clientX, e.clientY);
+    this.setPointerCapture(e.pointerId);
+  });
+
+  vinyl.addEventListener("pointermove", function(e) {
+    if (!dragging) return;
+
+    moveGhost(e.clientX, e.clientY);
+
+    const rect = dropZone.getBoundingClientRect();
+
+    const inside =
+      e.clientX >= rect.left &&
+      e.clientX <= rect.right &&
+      e.clientY >= rect.top &&
+      e.clientY <= rect.bottom;
+
+    playerSlot.classList.toggle("drag-over", inside);
+  });
+
+  vinyl.addEventListener("pointerup", function(e) {
+    if (!dragging) return;
+
+    const rect = dropZone.getBoundingClientRect();
+
+    const inside =
+      e.clientX >= rect.left &&
+      e.clientX <= rect.right &&
+      e.clientY >= rect.top &&
+      e.clientY <= rect.bottom;
+
+    if (inside) chooseTrack(draggedTrack);
+
+    endDrag();
+  });
+
+  vinyl.addEventListener("pointercancel", endDrag);
+});
+
+function moveGhost(x, y) {
+  if (!ghost) return;
+
+  ghost.style.left = x + "px";
+  ghost.style.top = y + "px";
+}
+
+function endDrag() {
+  dragging = false;
+
+  if (ghost) {
+    ghost.remove();
+    ghost = null;
+  }
+
+  playerSlot.classList.remove("drag-over");
+}
+
+
+/* PLAY / PAUSE */
+
+document.getElementById("playMusic").addEventListener("click", function() {
+  if (selectedTrack === null) {
+    trackName.textContent = "choose a record first :>";
+    return;
+  }
+
+  audio.play().then(() => {
+    playerVinyl.classList.remove("paused");
+  }).catch(() => {
+    trackName.textContent = "couldn't play this track — check the audio file";
+  });
+});
+
+document.getElementById("pauseMusic").addEventListener("click", function() {
+  audio.pause();
+  playerVinyl.classList.add("paused");
+});
+
+
+/* NEXT TO LETTER */
+
+document.getElementById("musicNext").addEventListener("click", function() {
+  audio.pause();
+
+  const letterScreen = document.getElementById("scene-letter");
+
+  if (letterScreen) {
+    musicScreen.hidden = true;
+    letterScreen.hidden = false;
+  } else {
+    alert("Music Scene đã xong! Tiếp theo mình sẽ thêm Letter Scene :>");
+  }
 });
 </script>
 </body>
