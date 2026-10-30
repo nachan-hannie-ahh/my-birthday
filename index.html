@@ -496,6 +496,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
     gap: 12px;
     transform: translateX(-1vw);
   }
+}
 
 /* ===== ENVELOPE SCENE ===== */
 
@@ -545,7 +546,6 @@ text-shadow: 1px 1px 2px var(--chocolate);
   0%, 100% { translate: 0 0; }
   50% { translate: 0 -7px; }
  }
-}
 .confetti-piece {
   position: absolute;
   top: -20px;
@@ -1182,6 +1182,11 @@ document.getElementById("answerTwo")
 const letterScreen = document.getElementById("scene-letter");
 
 function openLetter() {
+  guestNameForLetter =
+    sessionStorage.getItem("guestFullName") || "Guest";
+
+  dearName.textContent = guestNameForLetter;
+
   envelopeScreen.hidden = true;
   letterScreen.hidden = false;
   showLetterPage(0);
@@ -1214,9 +1219,7 @@ const letterNext =
 const saveDear =
   document.getElementById("saveDear");
 
-const guestNameForLetter =
-  sessionStorage.getItem("guestFullName") || "you";
-
+let guestNameForLetter = "";
 dearName.textContent = guestNameForLetter;
 
 const letterPages = [
