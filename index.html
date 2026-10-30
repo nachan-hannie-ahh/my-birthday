@@ -376,7 +376,8 @@ text-shadow: 1px 1px 2px var(--chocolate);
 
 /* ===== DIALOGUE SCENE ===== */
 
-#scene-dialogue {
+#scene-dialogue,
+#scene-after-letter {
   position: fixed;
   inset: 0;
   z-index: 6;
@@ -390,7 +391,8 @@ text-shadow: 1px 1px 2px var(--chocolate);
   color: white;
 }
 
-#scene-dialogue[hidden] {
+#scene-dialogue[hidden],
+#scene-after-letter[hidden] {
   display: none !important;
 }
 
@@ -697,6 +699,58 @@ text-shadow: 1px 1px 2px var(--chocolate);
     padding: 7px 17px;
   }
 }
+
+  /* ===== ENVELOPE TRANSITION ===== */
+
+.envelope-continue {
+  margin-top: 18px;
+  padding: 8px 25px;
+  border: 2px solid #ffcc54;
+  border-radius: 12px;
+  background: #ffda82;
+  color: #542c1d;
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(25px, 4vw, 38px);
+  letter-spacing: 0;
+  cursor: pointer;
+  text-shadow: none;
+}
+
+.envelope-continue:hover {
+  background: #ffcc54;
+  transform: translateY(-3px);
+}
+
+.envelope-continue[hidden] {
+  display: none !important;
+}
+
+.envelope-image.leaving {
+  animation: envelope-leave .85s cubic-bezier(.65, 0, .35, 1) forwards;
+  pointer-events: none;
+}
+
+.envelope-instruction.leaving {
+  animation: instruction-fade .35s ease forwards;
+}
+
+.envelope-continue.leaving {
+  animation: instruction-fade .25s ease forwards;
+}
+
+@keyframes envelope-leave {
+  to {
+    opacity: 0;
+    transform: translate(-120vw, -8vh) rotate(-12deg) scale(.8);
+  }
+}
+
+@keyframes instruction-fade {
+  to {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
 </style>
 </head>
 <body>
@@ -835,9 +889,38 @@ text-shadow: 1px 1px 2px var(--chocolate);
     tabindex="0"
   >
 
-  <div id="confettiLayer" aria-hidden="true"></div>
-</section>
+    <div id="confettiLayer" aria-hidden="true"></div>
 
+  <button type="button" class="envelope-continue" id="envelopeContinue" hidden>
+    tiếp tục →
+  </button>
+</section>
+<!-- AFTER LETTER DIALOGUE -->
+<section id="scene-after-letter" hidden>
+
+  <div class="dialogue-content">
+    <p class="dialogue-line">
+      <span class="dialogue-speaker">Nách:</span>
+      <span class="dialogue-message" id="afterLetterText"></span>
+    </p>
+  </div>
+
+  <p class="dialogue-hint" id="afterLetterHint">
+    click anywhere to continue...
+  </p>
+
+  <div class="dialogue-answers" id="afterLetterAnswers" hidden>
+    <button class="dialogue-answer" id="goWishlist" type="button">
+      Đi
+    </button>
+
+    <button class="dialogue-answer" id="skipWishlist" type="button">
+      Khôm đi
+    </button>
+  </div>
+
+</section>
+  
 <!-- LETTER SCENE -->
 <section id="scene-letter" hidden>
   <p class="letter-progress" id="letterProgress">
@@ -858,8 +941,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
     </div>
   </div>
 
-  <div class="letter-actions">
-  <div class="letter-actions">
+ <div class="letter-actions">
     <button type="button" class="letter-button" id="saveDear">
       Save your Dear
     </button>
@@ -1185,9 +1267,19 @@ function makeConfetti() {
   }
 }
 
+const envelopeContinue =
+  document.getElementById("envelopeContinue");
+
 function openEnvelopeScene() {
   dialogueScreen.hidden = true;
   envelopeScreen.hidden = false;
+
+  envelopeContinue.hidden = true;
+
+  envelopeImage.classList.remove("leaving");
+  document.querySelector(".envelope-instruction")
+    .classList.remove("leaving");
+
   makeConfetti();
 }
 
@@ -1285,6 +1377,15 @@ letterNext.addEventListener("click", () => {
     showLetterPage(currentPageIndex + 1);
   } else {
     letterScreen.hidden = true;
+    envelopeScreen.hidden = false;
+
+    envelopeContinue.hidden = false;
+
+    envelopeImage.classList.remove("leaving");
+    document.querySelector(".envelope-instruction")
+      .classList.remove("leaving");
+
+    makeConfetti();
   }
 });
 
@@ -1446,7 +1547,138 @@ document.addEventListener("keydown", event => {
     closeImageViewer();
   }
 });
+/* ===== ENVELOPE TO AFTER-LETTER DIALOGUE ===== */
 
+const afterLetterScreen =
+  document.getElementById("scene-after-letter");
+
+const afterLetterText =
+  document.getElementById("afterLetterText");
+
+const afterLetterHint =
+  document.getElementById("afterLetterHint");
+
+const afterLetterAnswers =
+  document.getElementById("afterLetterAnswers");
+
+const afterLetterDialogues = [
+  "me khom có ý gì đâu...",
+  "nhưng mà có một số người hỏi me là...",
+  '"Nách thích gì thế?"',
+  "nên tiếp theo sẽ là wishlist!",
+  "trong đó có mấy thứ me muốn hoặc thích á.",
+  "mng có thể tham khảo nếu muốn nha :D",
+  "đi đến danh sách yêu thích của Nách?"
+];
+
+let afterLetterIndex = 0;
+let afterLetterTyping = false;
+let afterLetterFinished = false;
+let afterLetterTimer = null;
+let afterLetterQuestion = false;
+
+function showAfterLetterDialogue(index) {
+  clearInterval(afterLetterTimer);
+
+  afterLetterIndex = index;
+  afterLetterText.textContent = "";
+  afterLetterHint.textContent = "";
+  afterLetterAnswers.hidden = true;
+
+  afterLetterTyping = true;
+  afterLetterFinished = false;
+
+  const message = afterLetterDialogues[index];
+  let charIndex = 0;
+
+  afterLetterTimer = setInterval(() => {
+    afterLetterText.textContent += message[charIndex];
+    charIndex++;
+
+    if (charIndex >= message.length) {
+      finishAfterLetterDialogue();
+    }
+  }, 65);
+}
+
+function finishAfterLetterDialogue() {
+  clearInterval(afterLetterTimer);
+
+  afterLetterText.textContent =
+    afterLetterDialogues[afterLetterIndex];
+
+  afterLetterTyping = false;
+  afterLetterFinished = true;
+
+  if (afterLetterIndex < afterLetterDialogues.length - 1) {
+    afterLetterHint.textContent =
+      "click anywhere to continue...";
+  } else {
+    afterLetterHint.textContent = "";
+    afterLetterAnswers.hidden = false;
+    afterLetterQuestion = true;
+  }
+}
+
+function startAfterLetterScene() {
+  envelopeScreen.hidden = true;
+  afterLetterScreen.hidden = false;
+
+  afterLetterIndex = 0;
+  afterLetterQuestion = false;
+
+  showAfterLetterDialogue(0);
+}
+
+envelopeContinue.addEventListener("click", () => {
+  envelopeContinue.disabled = true;
+
+  envelopeImage.classList.add("leaving");
+
+  document.querySelector(".envelope-instruction")
+    .classList.add("leaving");
+
+  envelopeContinue.classList.add("leaving");
+
+  setTimeout(() => {
+    startAfterLetterScene();
+
+    envelopeContinue.disabled = false;
+  }, 850);
+});
+
+afterLetterScreen.addEventListener("click", event => {
+  if (event.target.closest(".dialogue-answer")) return;
+
+  if (afterLetterTyping) {
+    finishAfterLetterDialogue();
+    return;
+  }
+
+  if (!afterLetterFinished) return;
+
+  if (afterLetterIndex < afterLetterDialogues.length - 1) {
+    showAfterLetterDialogue(afterLetterIndex + 1);
+  }
+});
+
+/* Hai lựa chọn cuối */
+
+document.getElementById("skipWishlist")
+  .addEventListener("click", () => {
+    window.close();
+
+    setTimeout(() => {
+      if (!window.closed) {
+        history.back();
+      }
+    }, 150);
+  });
+
+document.getElementById("goWishlist")
+  .addEventListener("click", () => {
+    // Sẽ nối sang scene Gift box khi scene đó được thêm.
+  });
 </script>
 </body>
 </html>
