@@ -38,8 +38,12 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
+}
+  main {
+  position: relative;
+  z-index: 1;
 }
 h1 {
   font-size: clamp(14px, 4.5vw, 48px);
@@ -56,6 +60,19 @@ h1 {
 form {
   width: min(100%, 390px);
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.name-line {
+  display: block;
+  width: 100%;
+}
+
+#nameForm button {
+  display: block;
+  margin: 28px auto 0;
 }
 
 .name-line {
@@ -144,7 +161,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
   justify-content: space-between;
   padding: 35px 5vw 45px;
   box-sizing: border-box;
-  background: linear-gradient(180deg, #cffffc, #cff9ff, #a8f3ff);
+  background: rgba(207, 249, 255, 0.25);
   color: #00288c;
   z-index: 5;
 }
@@ -203,12 +220,17 @@ text-shadow: 1px 1px 2px var(--chocolate);
 .player-vinyl {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, #a8f3ff 0 8%, #00288c 9% 13%,
-    #111 14% 17%, #222 18% 55%, #080808 56% 100%);
-  box-shadow: 0 3px 12px #00288c55;
+  object-fit: contain;
   display: none;
+}
+
+.player-vinyl.visible {
+  display: block;
+  animation: vinyl-spin 3s linear infinite;
+}
+
+.player-vinyl.paused {
+  animation-play-state: paused;
 }
 
 .player-vinyl.visible {
@@ -385,11 +407,11 @@ text-shadow: 1px 1px 2px var(--chocolate);
     <div class="music-player-area" id="musicDropZone">
       <img
         class="music-player-image"
-        src="assets/may-phat.png"
+       src="assets/máy phát nhạc.png"
         alt="Music player"
       >
-      <div class="player-drop-zone" id="playerSlot">
-        <div class="player-vinyl" id="playerVinyl"></div>
+      <div class="music-drop-zone" id="playerSlot">
+       <img class="player-vinyl" id="playerVinyl" alt="Selected vinyl">
       </div>
     </div>
 
@@ -422,12 +444,12 @@ text-shadow: 1px 1px 2px var(--chocolate);
 
     <div class="album-card">
       <div class="album-vinyl" data-track="3"></div>
-      <img class="album-cover" src="assets/bìa mitsuri.png" alt="Mitsuri">
+      <img class="album-cover" src="assets/bìa matsuri.png" alt="Matsuri">
     </div>
 
     <div class="album-card">
   <div class="album-vinyl" data-track="4"></div>
-  <img class="album-cover" src="assets/bìa Ngọt.png" alt="Ngọt">
+  <img class="album-cover" src="assets/bìa ngọt.png" alt="Ngọt">
     </div>
 
   </div>
@@ -470,12 +492,32 @@ nameForm.addEventListener("submit", function(event) {
 
 /* ===== MUSIC PLAYER ===== */
 
-const tracks = [
-  { name: "BLACKPINK", src: "assets/blackpink.mp3" },
-  { name: "JVKE", src: "assets/JVKE.mp3" },
-  { name: "Love", src: "assets/love.mp3" },
-  { name: "Mitsuri", src: "assets/mitsuri.mp3" },
-  { name: "Ngọt", src: "assets/Ngọt.mp3" }
+ const tracks = [
+  {
+    name: "BLACKPINK",
+    src: "assets/blackpink audio.mp3",
+    disc: "assets/blackpink.png"
+  },
+  {
+    name: "JVKE",
+    src: "assets/JVKE audio.mp3",
+    disc: "assets/JVKE.png"
+  },
+  {
+    name: "Love",
+    src: "assets/love audio.mp3",
+    disc: "assets/love.png"
+  },
+  {
+    name: "Matsuri",
+    src: "assets/matsuri audio.mp3",
+    disc: "assets/matsuri.png"
+  },
+  {
+    name: "Ngọt",
+    src: "assets/ngọt audio.mp3",
+    disc: "assets/ngọt.png"
+  }
 ];
 
 const audio = document.getElementById("birthdayMusic");
@@ -488,6 +530,7 @@ let selectedTrack = null;
 
 function chooseTrack(index) {
   selectedTrack = index;
+  playerVinyl.src = tracks[index].disc;
 
   audio.pause();
   audio.src = tracks[index].src;
