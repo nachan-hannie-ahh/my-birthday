@@ -372,6 +372,8 @@ text-shadow: 1px 1px 2px var(--chocolate);
   .album-vinyl {
     left: 35%;
   }
+}
+
 /* ===== DIALOGUE SCENE ===== */
 
 #scene-dialogue {
@@ -379,12 +381,13 @@ text-shadow: 1px 1px 2px var(--chocolate);
   inset: 0;
   z-index: 6;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  text-align: center;
+  overflow: hidden;
+  padding: 24px;
+  background: transparent;
   color: white;
-  cursor: pointer;
 }
 
 #scene-dialogue[hidden] {
@@ -394,39 +397,105 @@ text-shadow: 1px 1px 2px var(--chocolate);
 .dialogue-content {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 12px;
-  pointer-events: none;
+  align-items: center;
+  transform: translateX(-2vw);
+}
+
+.dialogue-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 9px;
+  max-width: 100%;
+  white-space: nowrap;
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(25px, 5vw, 52px);
+  font-weight: normal;
+  margin: 0;
+  text-shadow: 2px 2px 3px #2e2217,
+               3px 3px 6px #2e2217;
 }
 
 .dialogue-speaker {
-  font-size: clamp(20px, 3vw, 30px);
-  margin: 0;
-  text-shadow: 2px 2px 5px #192e17;
+  color: #ffcc54;
+  flex-shrink: 0;
 }
 
-.dialogue-text {
-  font-size: clamp(30px, 5vw, 52px);
-  margin: 0;
-  min-height: 1.4em;
-  text-shadow:
-    2px 2px 2px #192e17,
-    3px 3px 5px #2e2217,
-    0 0 10px #542c1d;
+.dialogue-message {
+  color: #ffffff;
 }
 
 .dialogue-hint {
-  font-size: 17px;
-  opacity: .75;
-  margin-top: 20px;
-  animation: hint-blink 1.2s infinite;
+  position: absolute;
+  bottom: 8%;
+  font-family: "Are You Serious", cursive;
+  font-size: 23px;
+  color: white;
+  text-shadow: 2px 2px 4px #2e2217;
+  opacity: 0.8;
+  animation: dialogue-blink 1.2s infinite;
+  pointer-events: none;
 }
 
-@keyframes hint-blink {
-  50% { opacity: .25; }
- }
+@keyframes dialogue-blink {
+  50% { opacity: 0.3; }
+}
+
+.dialogue-answers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 45px;
+  transform: translateX(-2vw);
+}
+
+.dialogue-answers[hidden] {
+  display: none !important;
+}
+
+.dialogue-answer {
+  margin: 0;
+  padding: 10px 28px;
+  border: 2px solid #ffcc54;
+  border-radius: 12px;
+  background: #ffda82;
+  color: #542c1d;
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(25px, 4vw, 38px);
+  letter-spacing: 0;
+  text-shadow: 1px 1px 2px #2e2217;
+  cursor: pointer;
+  transition: color .2s, transform .2s, background .2s;
+}
+
+.dialogue-answer:hover {
+  color: #5e0000;
+  transform: translateY(-3px);
+}
+
+.dialogue-answer:active {
+  color: #5e0000;
+  transform: scale(0.96);
+}
+
+@media (max-width: 600px) {
+  .dialogue-line {
+    font-size: clamp(23px, 5vw, 38px);
+    gap: 6px;
+  }
+
+  .dialogue-content {
+    transform: translateX(-1vw);
+  }
+
+  .dialogue-answers {
+    gap: 12px;
+    transform: translateX(-1vw);
+  }
 }
 </style>
 </head>
@@ -521,17 +590,34 @@ text-shadow: 1px 1px 2px var(--chocolate);
   <audio id="birthdayMusic"></audio>
 
 </section>
-  
-<!-- DIALOGUE SCENE -->
+
+  <!-- ===== DIALOGUE SCENE ===== -->
 
 <section id="scene-dialogue" hidden>
+
   <div class="dialogue-content">
-    <p class="dialogue-speaker">character</p>
-    <p class="dialogue-text" id="dialogueText"></p>
-    <p class="dialogue-hint" id="dialogueHint">
-      click anywhere to continue...
+    <p class="dialogue-line">
+      <span class="dialogue-speaker" id="dialogueSpeaker">
+        Nách:
+      </span>
+      <span class="dialogue-message" id="dialogueText"></span>
     </p>
   </div>
+
+  <p class="dialogue-hint" id="dialogueHint">
+    click anywhere to continue...
+  </p>
+
+  <div class="dialogue-answers" id="dialogueAnswers" hidden>
+    <button class="dialogue-answer" id="answerOne" type="button">
+      Answer 1
+    </button>
+
+    <button class="dialogue-answer" id="answerTwo" type="button">
+      Answer 2
+    </button>
+  </div>
+
 </section>
 
 <script>
@@ -562,15 +648,17 @@ nameForm.addEventListener("submit", function(event) {
   musicScreen.hidden = false;
 });
 
+
 /* ===== DIALOGUE SYSTEM ===== */
 
 const dialogueScreen = document.getElementById("scene-dialogue");
 const dialogueText = document.getElementById("dialogueText");
 const dialogueHint = document.getElementById("dialogueHint");
+const dialogueAnswers = document.getElementById("dialogueAnswers");
 
 const dialogues = [
-  "chao xìn",
-  "me vui khi thấy you ở đây:D",
+  "chao xìn:D",
+  "me vui khi thấy you ở đây đó:)",
   "me có thứ này muốn thông báo cho you"
 ];
 
@@ -585,6 +673,8 @@ function showDialogue(index) {
   dialogueIndex = index;
   dialogueText.textContent = "";
   dialogueHint.textContent = "";
+  dialogueAnswers.hidden = true;
+
   isTyping = true;
   dialogueFinished = false;
 
@@ -596,32 +686,30 @@ function showDialogue(index) {
     charIndex++;
 
     if (charIndex >= message.length) {
-      clearInterval(typingTimer);
-      isTyping = false;
-      dialogueFinished = true;
-
-      if (index < 2) {
-        dialogueHint.textContent =
-          "click anywhere to continue...";
-      } else {
-        // Chờ hai nút trả lời của bạn.
-        dialogueHint.textContent = "";
-      }
+      finishDialogue();
     }
   }, 65);
 }
 
-dialogueScreen.addEventListener("click", () => {
-  if (isTyping) {
-    clearInterval(typingTimer);
-    dialogueText.textContent = dialogues[dialogueIndex];
-    isTyping = false;
-    dialogueFinished = true;
+function finishDialogue() {
+  clearInterval(typingTimer);
+  dialogueText.textContent = dialogues[dialogueIndex];
+  isTyping = false;
+  dialogueFinished = true;
 
-    if (dialogueIndex < 2) {
-      dialogueHint.textContent =
-        "click anywhere to continue...";
-    }
+  if (dialogueIndex < 2) {
+    dialogueHint.textContent = "click anywhere to continue...";
+  } else {
+    dialogueHint.textContent = "";
+    dialogueAnswers.hidden = false;
+  }
+}
+
+dialogueScreen.addEventListener("click", (event) => {
+  if (event.target.closest(".dialogue-answer")) return;
+
+  if (isTyping) {
+    finishDialogue();
     return;
   }
 
@@ -632,10 +720,8 @@ dialogueScreen.addEventListener("click", () => {
   }
 });
 
-// Hàm dành cho hai nút trả lời tự thiết kế
 function continueToNextScene() {
   dialogueScreen.hidden = true;
-  // Sau này nối với scene tiếp theo tại đây.
 }
 
 
@@ -796,8 +882,6 @@ document.getElementById("pauseMusic").addEventListener("click", function() {
 /* NEXT TO DIALOGUE */
 
 document.getElementById("musicNext").addEventListener("click", function() {
-  audio.pause();
-
   musicScreen.hidden = true;
   dialogueScreen.hidden = false;
 
