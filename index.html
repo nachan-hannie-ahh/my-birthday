@@ -496,6 +496,185 @@ text-shadow: 1px 1px 2px var(--chocolate);
     gap: 12px;
     transform: translateX(-1vw);
   }
+
+/* ===== ENVELOPE SCENE ===== */
+
+#scene-envelope, #scene-letter {
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.envelope-instruction {
+  color: white;
+  font-size: clamp(24px, 4vw, 38px);
+  margin: 0 0 20px;
+  text-align: center;
+  text-shadow: 2px 2px 4px #2e2217;
+  animation: dialogue-blink 1.3s infinite;
+}
+
+.envelope-image {
+  width: min(85vw, 650px);
+  max-height: 70vh;
+  object-fit: contain;
+  cursor: pointer;
+  filter: drop-shadow(0 12px 20px #192e1766);
+  animation: envelope-enter .9s ease-out,
+             envelope-float 2.8s ease-in-out 1s infinite;
+}
+
+.envelope-image:hover {
+  transform: scale(1.03);
+}
+
+@keyframes envelope-enter {
+  0% { opacity: 0; transform: translateY(35px) scale(.8); }
+  70% { opacity: 1; transform: translateY(-8px) scale(1.04); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes envelope-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  pointer-events: none;
+  animation: confetti-fall var(--fall-time) linear var(--delay) forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  100% {
+    transform: translate(var(--drift), 110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ===== LETTER ===== */
+
+#scene-letter {
+  gap: 12px;
+}
+
+.letter-page-wrap {
+  position: relative;
+  width: min(88vw, 76vh, 900px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.letter-page-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  filter: drop-shadow(0 10px 22px #192e1740);
+}
+
+.dear-name {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80%;
+  color: #2e2217;
+  font-family: "Are You Serious", cursive;
+  font-size: clamp(30px, 5vw, 58px);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.letter-progress {
+  margin: 0;
+  font-size: 22px;
+  color: white;
+  text-shadow: 1px 1px 4px #2e2217;
+}
+
+.letter-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.letter-button {
+  margin: 0;
+  padding: 8px 22px;
+  border: 1px solid #ffda82;
+  border-radius: 30px;
+  background: #ffda82;
+  color: #542c1d;
+  text-shadow: none;
+  font-size: clamp(25px, 3.5vw, 36px);
+  letter-spacing: 0;
+}
+
+.letter-button:hover {
+  background: #ffcc54;
+  color: #5e0000;
+}
+
+/* ===== IMAGE VIEWER ===== */
+
+#imageViewer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(15, 25, 13, .94);
+}
+
+#imageViewer[hidden] {
+  display: none !important;
+}
+
+#imageViewer img {
+  max-width: 95vw;
+  max-height: 88vh;
+  object-fit: contain;
+}
+
+#closeViewer {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  margin: 0;
+  color: white;
+  font-size: 42px;
+  text-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .letter-page-wrap {
+    width: min(92vw, 65vh);
+  }
+
+  .letter-button {
+    font-size: 27px;
+    padding: 7px 17px;
+  }
 }
 </style>
 </head>
@@ -619,6 +798,59 @@ text-shadow: 1px 1px 2px var(--chocolate);
   </div>
 
 </section>
+  
+<!-- ENVELOPE SCENE -->
+<section id="scene-envelope" hidden>
+  <p class="envelope-instruction">
+    ấn vào sáp niêm phong để mở thư nhé :&gt;
+  </p>
+
+  <img
+    class="envelope-image"
+    id="envelopeImage"
+    src="assets/Thiệp.png"
+    alt="Phong bì thư"
+    role="button"
+    tabindex="0"
+  >
+
+  <div id="confettiLayer" aria-hidden="true"></div>
+</section>
+
+<!-- LETTER SCENE -->
+<section id="scene-letter" hidden>
+  <p class="letter-progress" id="letterProgress">
+    a little letter for you
+  </p>
+
+  <div class="letter-page-wrap">
+    <img
+      class="letter-page-image"
+      id="letterPageImage"
+      src="assets/Dear.png"
+      alt="Dear page"
+    >
+
+    <span class="dear-name" id="dearName"></span>
+  </div>
+
+  <div class="letter-actions">
+    <button type="button" class="letter-button" id="saveDear">
+      Save your Dear
+    </button>
+
+    <button type="button" class="letter-button" id="letterNext">
+      đọc tiếp
+    </button>
+  </div>
+</section>
+
+<!-- ENLARGED IMAGE -->
+<div id="imageViewer" hidden>
+  <button type="button" id="closeViewer">×</button>
+  <img id="viewerImage" alt="Enlarged letter">
+</div>
+
 
 <script>
 
@@ -887,6 +1119,236 @@ document.getElementById("musicNext").addEventListener("click", function() {
 
   showDialogue(0);
 });
+  
+/* ===== DIALOGUE ANSWERS TO ENVELOPE ===== */
+
+const envelopeScreen = document.getElementById("scene-envelope");
+const envelopeImage = document.getElementById("envelopeImage");
+const confettiLayer = document.getElementById("confettiLayer");
+
+function makeConfetti() {
+  confettiLayer.innerHTML = "";
+
+  const colors = [
+    "#ffda82", "#ffe6d6", "#93bd8f",
+    "#ffcc54", "#ffffff"
+  ];
+
+  for (let i = 0; i < 42; i++) {
+    const piece = document.createElement("span");
+
+    piece.className = "confetti-piece";
+    piece.style.left = Math.random() * 100 + "%";
+    piece.style.background = colors[i % colors.length];
+
+    piece.style.setProperty(
+      "--fall-time",
+      (3 + Math.random() * 3) + "s"
+    );
+
+    piece.style.setProperty(
+      "--delay",
+      Math.random() * 1.5 + "s"
+    );
+
+    piece.style.setProperty(
+      "--drift",
+      (Math.random() * 150 - 75) + "px"
+    );
+
+    confettiLayer.appendChild(piece);
+  }
+}
+
+function openEnvelopeScene() {
+  dialogueScreen.hidden = true;
+  envelopeScreen.hidden = false;
+  makeConfetti();
+}
+
+document.getElementById("answerOne")
+  .addEventListener("click", openEnvelopeScene);
+
+document.getElementById("answerTwo")
+  .addEventListener("click", openEnvelopeScene);
+
+
+/* ===== ENVELOPE TO LETTER ===== */
+
+const letterScreen = document.getElementById("scene-letter");
+
+function openLetter() {
+  envelopeScreen.hidden = true;
+  letterScreen.hidden = false;
+  showLetterPage(0);
+}
+
+envelopeImage.addEventListener("click", openLetter);
+
+envelopeImage.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    openLetter();
+  }
+});
+
+
+/* ===== LETTER PAGES ===== */
+
+const letterPageImage =
+  document.getElementById("letterPageImage");
+
+const dearName =
+  document.getElementById("dearName");
+
+const letterProgress =
+  document.getElementById("letterProgress");
+
+const letterNext =
+  document.getElementById("letterNext");
+
+const saveDear =
+  document.getElementById("saveDear");
+
+const guestNameForLetter =
+  sessionStorage.getItem("guestFullName") || "you";
+
+dearName.textContent = guestNameForLetter;
+
+const letterPages = [
+  {
+    src: "assets/Dear.png",
+    label: "a little letter for you"
+  },
+  {
+    src: "assets/Nội dung.png",
+    label: "just a few words..."
+  },
+  {
+    src: "assets/Thông tin.png",
+    label: "the details!"
+  }
+];
+
+let currentPageIndex = 0;
+
+function showLetterPage(index) {
+  currentPageIndex = index;
+
+  const page = letterPages[index];
+
+  letterPageImage.src = page.src;
+  letterProgress.textContent = page.label;
+
+  const isDear = index === 0;
+
+  dearName.hidden = !isDear;
+  saveDear.hidden = !isDear;
+
+  letterNext.textContent =
+    index === letterPages.length - 1
+      ? "đóng thư"
+      : "đọc tiếp";
+}
+
+letterNext.addEventListener("click", () => {
+  if (currentPageIndex < letterPages.length - 1) {
+    showLetterPage(currentPageIndex + 1);
+  } else {
+    letterScreen.hidden = true;
+  }
+});
+
+
+/* ===== SAVE DEAR AS JPG ===== */
+
+saveDear.addEventListener("click", async () => {
+  const image = new Image();
+  image.src = "assets/Dear.png";
+
+  try {
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+
+      if (image.complete && image.naturalWidth > 0) {
+        resolve();
+      }
+    });
+
+    await document.fonts.ready;
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(image, 0, 0);
+
+    const fontSize = Math.round(canvas.width * 0.055);
+
+    ctx.font = `${fontSize}px "Are You Serious"`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#2e2217";
+
+    ctx.fillText(
+      guestNameForLetter,
+      canvas.width / 2,
+      canvas.height / 2,
+      canvas.width * 0.8
+    );
+
+    const safeName = guestNameForLetter
+      .replace(/[\\/:*?"<>|]/g, "")
+      .replace(/\s+/g, "_");
+
+    const link = document.createElement("a");
+
+    link.download = `Dear_${safeName}.jpg`;
+    link.href = canvas.toDataURL("image/jpeg", 0.95);
+
+    link.click();
+
+  } catch (error) {
+    alert("Không tải được Dear. Kiểm tra file assets/Dear.png nhé.");
+    console.error(error);
+  }
+});
+
+
+/* ===== ENLARGE LETTER IMAGE ===== */
+
+const imageViewer = document.getElementById("imageViewer");
+const viewerImage = document.getElementById("viewerImage");
+
+letterPageImage.addEventListener("click", () => {
+  viewerImage.src = letterPageImage.src;
+  viewerImage.alt = letterPageImage.alt;
+  imageViewer.hidden = false;
+});
+
+function closeImageViewer() {
+  imageViewer.hidden = true;
+}
+
+document.getElementById("closeViewer")
+  .addEventListener("click", closeImageViewer);
+
+imageViewer.addEventListener("click", event => {
+  if (event.target === imageViewer) {
+    closeImageViewer();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeImageViewer();
+  }
+});
+
 </script>
 </body>
 </html>
