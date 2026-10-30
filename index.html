@@ -282,15 +282,17 @@ text-shadow: 1px 1px 2px var(--chocolate);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: clamp(8px, 2vw, 25px);
-  padding: 15px 0;
+  gap: clamp(18px, 3vw, 42px);
+  padding: 20px 35px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .album-card {
   position: relative;
-  width: clamp(75px, 14vw, 145px);
+  width: clamp(85px, 12vw, 125px);
   aspect-ratio: 1;
-  flex-shrink: 1;
+  flex: 0 0 auto;
 }
 
 .album-cover {
@@ -353,15 +355,18 @@ text-shadow: 1px 1px 2px var(--chocolate);
   }
 
   .album-row {
-    gap: 5px;
-  }
+  justify-content: flex-start;
+  gap: 24px;
+  padding: 20px 25px;
+}
 
-  .album-card {
-    width: 17vw;
-  }
+.album-card {
+  width: 100px;
+  flex: 0 0 100px;
+}
 
-  .album-vinyl {
-    left: 25%;
+.album-vinyl {
+  left: 25%;
   }
 }
 </style>
