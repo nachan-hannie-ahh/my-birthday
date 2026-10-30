@@ -282,7 +282,10 @@ text-shadow: 1px 1px 2px var(--chocolate);
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 55px;
+
+  /* Khoảng cách = đúng chiều rộng một bìa */
+  gap: 115px;
+
   padding: 25px 65px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -291,7 +294,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
 .album-card {
   position: relative;
   width: 115px;
-  aspect-ratio: 1;
+  height: 115px;
   flex: 0 0 115px;
 }
 
@@ -354,19 +357,20 @@ text-shadow: 1px 1px 2px var(--chocolate);
     height: 190px;
   }
 
-  .album-row {
-  justify-content: flex-start;
-  gap: 45px;
-  padding: 20px 30px;
-}
+    .album-row {
+    justify-content: flex-start;
+    gap: 100px;
+    padding: 20px 30px;
+  }
 
-.album-card {
-  width: 100px;
-  flex: 0 0 100px;
-}
+  .album-card {
+    width: 100px;
+    height: 100px;
+    flex: 0 0 100px;
+  }
 
-.album-vinyl {
-  left: 25%;
+  .album-vinyl {
+    left: 35%;
   }
 }
 </style>
