@@ -594,6 +594,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
 }
 
 .dear-text {
+  font-size: 12pt;
   position: absolute;
   left: 12%;
   top: 25%;
@@ -613,6 +614,7 @@ text-shadow: 1px 1px 2px var(--chocolate);
 }
 
 .dear-name {
+  font-size: 30pt;
   display: block;
   max-width: 100%;
   font-family: "Are You Serious", cursive;
@@ -1427,13 +1429,13 @@ saveDear.addEventListener("click", async () => {
     ctx.fillStyle = "#542c1d";
 
     // Chữ Dear nhỏ
-    const labelSize = w * 0.04;
+    const labelSize = w * (12 / 72);
     ctx.font = `${labelSize}px "Are You Serious"`;
     ctx.fillText("Dear", x, y);
 
     // Tên khách lớn hơn
-    let fontSize = w * 0.10;
-    const minFontSize = w * 0.045;
+    let fontSize = w * (30 / 72);
+    const minFontSize = w * (30 / 72);
     const lineHeight = 1.05;
 
     let lines = [];
