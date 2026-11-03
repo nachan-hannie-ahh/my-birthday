@@ -1421,13 +1421,12 @@ saveDear.addEventListener("click", async () => {
     ctx.fillStyle = "#542c1d";
 
     // Chữ Dear nhỏ
-    const labelSize = w * (24 / 72);
-    ctx.font = `${labelSize}px "Are You Serious"`;
-    ctx.fillText("Dear", x, y);
-
+const labelSize = w * (24 / 72);
+ctx.font = `${labelSize}px "Are You Serious", cursive`;
+ctx.fillText("Dear", x, y);
     // Tên khách lớn hơn
     let fontSize = w * (45 / 72);
-    const minFontSize = w * (45 / 72);
+    const minFontSize = w * (20 / 72);
     const lineHeight = 1.05;
 
     let lines = [];
@@ -1483,7 +1482,7 @@ saveDear.addEventListener("click", async () => {
 
     ctx.font = `${Math.max(fontSize, minFontSize)}px "Are You Serious"`;
 
-    const nameY = y + labelSize * 1.5;
+    const nameY = y + labelSize * 2;
     const actualLineHeight = Math.max(fontSize, minFontSize) * lineHeight;
 
     lines.forEach((line, index) => {
